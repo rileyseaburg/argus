@@ -1,4 +1,3 @@
-use std::collections::HashMap; // FIXME: change back to above
 use std::{
   cell::RefCell,
   cmp::{Eq, PartialEq},
@@ -6,7 +5,7 @@ use std::{
 };
 
 use index_vec::{Idx, IndexVec};
-// use rustc_data_structures::fx::FxHashMap as HashMap;
+use rustc_data_structures::fx::FxHashMap as HashMap;
 use rustc_middle::ty;
 
 crate::define_idx! {
@@ -22,6 +21,8 @@ pub struct Interner<K: PartialEq + Eq + Hash, I: Idx, D> {
   keys: HashMap<K, I>,
 }
 
+const DEFAULT_CAPACITY: usize = 1_000;
+
 impl<K, I, D> Default for Interner<K, I, D>
 where
   K: PartialEq + Eq + Hash,
@@ -29,8 +30,8 @@ where
 {
   fn default() -> Self {
     Self {
-      values: IndexVec::with_capacity(1_000_000),
-      keys: HashMap::with_capacity(1_000_000),
+      values: IndexVec::with_capacity(DEFAULT_CAPACITY),
+      keys: HashMap::with_capacity(DEFAULT_CAPACITY),
     }
   }
 }
@@ -60,5 +61,15 @@ where
 
   pub fn consume(self) -> IndexVec<I, D> {
     self.values
+  }
+}
+
+trait FxHashExt {
+  fn with_capacity(capacity: usize) -> Self;
+}
+
+impl<K, V> FxHashExt for HashMap<K, V> {
+  fn with_capacity(capacity: usize) -> Self {
+    HashMap::with_capacity_and_hasher(capacity, Default::default())
   }
 }
