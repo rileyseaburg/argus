@@ -26,6 +26,8 @@ use crate::{
   },
 };
 
+// NOTE all indices need to be exported
+// manually with ts-rs, see end of file.
 ser::define_idx! {
   u32,
   GoalIdx,
@@ -203,4 +205,13 @@ impl From<String> for CandidateData {
   fn from(value: String) -> Self {
     Self::Any(value)
   }
+}
+
+#[cfg(all(test, feature = "testing"))]
+#[test]
+fn export_bindings_indices() {
+  GoalIdx::export().expect("could not export type");
+  ImplementorsIdx::export().expect("could not export type");
+  CandidateIdx::export().expect("could not export type");
+  ResultIdx::export().expect("could not export type");
 }
