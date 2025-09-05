@@ -205,7 +205,7 @@ impl<'a, 'tcx: 'a> ObligationsBuilder<'a, 'tcx> {
       let Ok(range) = CharRange::from_span(span, source_map) else {
         log::error!(
           "failed to get range for HIR: {}",
-          hir.node_to_string(hir_id)
+          hir_id
         );
         continue;
       };
